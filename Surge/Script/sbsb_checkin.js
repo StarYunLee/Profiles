@@ -79,7 +79,7 @@ class UserInfo {
     async userAccount() {
         try {
             const opts = {
-                url: "/signin/",
+                url: "/checkin/",
                 type: "get"
             };
             let res = await this.fetch(opts);
@@ -115,7 +115,7 @@ class UserInfo {
     async signin() {
         try {
             const getOpts = {
-                url: "/signin/",
+                url: "/checkin/",
                 type: "get"
             };
             let res = await this.fetch(getOpts);
@@ -139,11 +139,11 @@ class UserInfo {
 
             const csrfToken = csrfMatch[1];
             const postOpts = {
-                url: "/signin/",
+                url: "/checkin/",
                 type: "post",
                 headers: {
                     'Origin': 'https://sb.sb',
-                    'Referer': 'https://sb.sb/signin/',
+                    'Referer': 'https://sb.sb/checkin/',
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: `_csrf=${encodeURIComponent(csrfToken)}`
