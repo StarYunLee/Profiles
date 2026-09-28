@@ -7,7 +7,7 @@
 
 [Script]
 # 烧饼论坛 - 捕获凭据（仅在访问签到页时触发）
-SBSBToken = type=http-request, pattern=^https:\/\/sb\.sb\/signin\/?(\?.*)?$, requires-body=false, timeout=60, script-path=https://raw.githubusercontent.com/StarYunLee/Profiles/main/Surge/Script/sbsb_checkin.js
+SBSBToken = type=http-request, pattern=^https:\/\/sb\.sb\/(checkin|signin)\/?(\?.*)?$, requires-body=false, timeout=60, script-path=https://raw.githubusercontent.com/StarYunLee/Profiles/main/Surge/Script/sbsb_checkin.js
 
 # 烧饼论坛 - 定时签到
 SBSBCheckin = type=cron, cronexp={{{Cron}}}, timeout=60, wake-system=1, script-path=https://raw.githubusercontent.com/StarYunLee/Profiles/main/Surge/Script/sbsb_checkin.js
