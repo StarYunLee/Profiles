@@ -31,7 +31,10 @@ async function main() {
                 }
                 
                 if (stats) {
-                    DoubleLog(`连续签到：${stats.streak} 天${stats.hint ? `（${stats.hint}）` : ""}`);
+                    DoubleLog(`连续签到：${stats.streak} 天`);
+                    for (const hint of stats.hints || []) {
+                        DoubleLog(hint);
+                    }
                     DoubleLog(`最长连续：${stats.maxStreak || "-"} 天 ｜ 累计签到：${stats.totalStreak || "-"} 天`);
                 }
             } else {
@@ -90,7 +93,6 @@ class UserInfo {
             }
 
             const streakMatch = html.match(/class="signin-streak-num">(\d+)<\/div>/);
-            const hintMatch = html.match(/class="signin-hint">(.*?)<\/div>/);
 
             let maxStreak = "", totalStreak = "";
             const statRegex = /class="signin-stat-value">(\d+)<\/span>\s*<span class="signin-stat-label">(.*?)<\/span>/g;
@@ -100,9 +102,19 @@ class UserInfo {
                 if (m[2].indexOf("累计") !== -1) totalStreak = m[1];
             }
 
+            const hints = [];
+            const hintRegex = /class="([^"]*signin-hint[^"]*)">([\s\S]*?)<\/div>/g;
+            let hm;
+            while ((hm = hintRegex.exec(html)) !== null) {
+                if (/\bsignin-makeup-off\b/.test(hm[1])) continue;
+                const text = stripHtml(hm[2]);
+                if (!text || text.indexOf("补签：") === 0) continue;
+                if (hints.indexOf(text) === -1) hints.push(text);
+            }
+
             return {
                 streak: streakMatch ? streakMatch[1] : "未知",
-                hint: hintMatch ? hintMatch[1].trim() : "",
+                hints,
                 maxStreak: maxStreak,
                 totalStreak: totalStreak
             };
@@ -216,6 +228,20 @@ async function getCookie() {
     .finally(async () => {
         $.done({ ok: 1 });
     });
+
+function stripHtml(s) {
+    return String(s || "")
+        .replace(/<br\s*\/?>/gi, "\n")
+        .replace(/<\/p>/gi, "\n")
+        .replace(/<[^>]+>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&amp;/g, "&")
+        .replace(/&quot;/g, '"')
+        .replace(/\s+/g, " ")
+        .trim();
+}
 
 /** ---------------------------------固定不动区域----------------------------------------- */
 //prettier-ignore
